@@ -1,7 +1,7 @@
 package store
 
 // import (
-// 	"github.com/matthewkappus/syncup/src/types"
+// 	"github.com/matthewkappus/rosterUpdate/src/types"
 // )
 
 // // create table queries

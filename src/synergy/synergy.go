@@ -3,7 +3,6 @@
 package synergy
 
 import (
-	"github.com/matthewkappus/syncup/src/types"
 	"bytes"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +12,8 @@ import (
 	"net/url"
 	"regexp"
 	"time"
+
+	"github.com/matthewkappus/rosterUpdate/src/types"
 )
 
 // AuthClient singleton for retrieving different job requests

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/matthewkappus/syncup/src/synergy"
+	"github.com/matthewkappus/rosterUpdate/src/synergy"
 )
 
 // UpdateRosters prompts user for Synergy Credentials, downloads Stu415s and emails, and

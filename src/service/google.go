@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"github.com/matthewkappus/syncup/src/types"
+	"github.com/matthewkappus/rosterUpdate/src/types"
 	gc "google.golang.org/api/classroom/v1"
 )
 

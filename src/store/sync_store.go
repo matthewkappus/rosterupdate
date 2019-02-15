@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/matthewkappus/syncup/src/types"
+	"github.com/matthewkappus/rosterUpdate/src/types"
 )
 
 const (

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/matthewkappus/syncup/src/handlers"
-	"github.com/matthewkappus/syncup/src/store"
-	"github.com/matthewkappus/syncup/src/types"
+	"github.com/matthewkappus/rosterUpdate/src/handlers"
+	"github.com/matthewkappus/rosterUpdate/src/store"
+	"github.com/matthewkappus/rosterUpdate/src/types"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	gc "google.golang.org/api/classroom/v1"

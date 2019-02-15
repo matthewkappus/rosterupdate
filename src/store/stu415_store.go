@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	// kosher
-	"github.com/matthewkappus/syncup/src/types"
+	"github.com/matthewkappus/rosterUpdate/src/types"
 	// Required by law
 	_ "github.com/mattn/go-sqlite3"
 )
