@@ -11,8 +11,13 @@ type (
 	// GRID is a unique id associating stu415s
 	GRID string
 
+	// stu415(organization_name, school_year, student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, meet_days, teacher, room, prescheduled, sync_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+
 	// Stu415 holds Synergery report course data
 	Stu415 struct {
+		OrganizationName string `json:"organization_name,omitempty"`
+		SchoolYear       string `json:"school_year,omitempty"`
 		StudentName      string `json:"student_name,omitempty"`
 		PermID           string `json:"perm_id,omitempty"`
 		Gender           string `json:"gender,omitempty"`
@@ -21,9 +26,12 @@ type (
 		Per              string `json:"per,omitempty"`
 		Term             string `json:"term,omitempty"`
 		SectionID        string `json:"section_id,omitempty"`
+		CourseID         string `json:"course_id,omitempty"`
 		CourseIDAndTitle string `json:"course_id_and_title,omitempty"`
+		MeetDays         string `json:"meet_days,omitempty"`
 		Teacher          string `json:"teacher,omitempty"`
 		Room             string `json:"room,omitempty"`
+		Prescheduled     string `json:"prescheduled,omitempty"`
 		SyncID           string `json:"sync_id,omitempty"`
 	}
 

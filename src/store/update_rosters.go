@@ -1,15 +1,14 @@
-package service
+package store
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/matthewkappus/rosterUpdate/src/synergy"
 )
 
-// UpdateRosters prompts user for Synergy Credentials, downloads Stu415s and emails, and
+// DownloadRosters prompts user for Synergy Credentials, downloads Stu415s and emails, and
 // returns error if the db can't be updated or provided wait time exceeded
-func (c *Classroom) UpdateRosters(wait time.Duration) error {
+func (r *Rosters) DownloadRosters(wait time.Duration) error {
 
 	u, pw, err := synergy.CredentialPrompt()
 	if err != nil {
@@ -34,15 +33,14 @@ func (c *Classroom) UpdateRosters(wait time.Duration) error {
 		return err
 	}
 
-	if err := c.DB.CreateNewStu415AndStaffEmails(); err != nil {
+	if err := r.CreateNewStu415AndStaffEmails(); err != nil {
 		return err
 	}
 	s415s.TeacherNameToEmail(emails)
 
-	if err := c.DB.InsertStu415s(s415s); err != nil {
+	if err := r.InsertStu415s(s415s); err != nil {
 		return err
 	}
 
-	fmt.Println("Download complete")
-	return c.DB.CreateMatthewADV()
+	return r.CreateMatthewADV()
 }

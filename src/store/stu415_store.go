@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 
 	// kosher
@@ -12,20 +13,16 @@ import (
 )
 
 //  head -n1 stu415.csv | tr '[:upper:]' '[:lower:]' | tr ' ' '_' | tr ',' ' NOT NULL,'
-
+// Organization Name,School Year,Student Name,Perm ID,Gender,Grade,Term Name,Per,Term,Section ID,Course ID And Title,Meet Days,Teacher,Room,PreScheduled
 const (
-	createStu415Table            = `CREATE TABLE IF NOT EXISTS stu415(student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id TEXT)`
+	createStu415Table = `CREATE TABLE IF NOT EXISTS stu415(organization_name, school_year, student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, meet_days, teacher, room, prescheduled, sync_id TEXT)`
+	// createStu415Table            = `CREATE TABLE IF NOT EXISTS stu415(student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id TEXT)`
 	dropStu415Table              = `DROP TABLE IF EXISTS stu415`
-	createStaffEmailsTable       = `CREATE TABLE IF NOT EXISTS staff_emails(email PRIMARY KEY NOT NULL, teacher)`
-	dropStaffEmailsTable         = `DROP TABLE IF EXISTS staff_emails`
-	insertStaffEmails            = `INSERT INTO staff_emails(email, teacher) VALUES(?,?)`
-	insertStu415                 = `INSERT INTO stu415(student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`
-	selectStu415sByTeacherPeriod = `SELECT student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id FROM stu415 WHERE teacher=? AND per=?`
-	selectStu415sByTeacher       = `SELECT student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id FROM stu415 WHERE teacher=?`
-	selectStu415BySection        = `SELECT student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id FROM stu415 WHERE section_id=?`
-	selectStu415BySID            = `SELECT student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, teacher, room, sync_id FROM stu415 WHERE sync_id=?`
-	selectEmailByName            = `SELECT email FROM staff_emails WHERE teacher=?`
-	selectNameFromEmail          = `SELECT teacher from staff_emails where email=?`
+	insertStu415                 = `INSERT INTO stu415(organization_name, school_year, student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, meet_days, teacher, room, prescheduled, sync_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	selectStu415sByTeacherPeriod = `SELECT * FROM stu415 WHERE teacher=? AND per=?`
+	selectStu415sByTeacher       = `SELECT * FROM stu415 WHERE teacher=?`
+	selectStu415BySection        = `SELECT * FROM stu415 WHERE section_id=?`
+	selectStu415BySID            = `SELECT * FROM stu415 WHERE sync_id=?`
 
 	// Executed by ac.CreateMatthewADV
 	createTmp         = `CREATE TABLE tmp AS SELECT * FROM stu415 WHERE course_id_and_title LIKE "08%00%"`
@@ -41,13 +38,6 @@ func cleanEmail(email string) string {
 // CreateNewStu415AndStaffEmails drops old roster tables
 func (rs *Rosters) CreateNewStu415AndStaffEmails() error {
 	var err error
-	if _, err = rs.Exec(dropStaffEmailsTable); err != nil {
-		return err
-	}
-	if _, err = rs.Exec(createStaffEmailsTable); err != nil {
-		return err
-	}
-
 	if _, err = rs.Exec(dropStu415Table); err != nil {
 		return err
 	}
@@ -71,11 +61,8 @@ func (rs *Rosters) UpdateRosters(s415s types.Stu415s, emails [][]string) error {
 		return err
 	}
 
-	if err = rs.InsertStu415s(s415s); err != nil {
-		return err
-	}
+	return rs.InsertStu415s(s415s)
 
-	return rs.InsertStaffEmails(emails)
 }
 
 // CreateMatthewADV adds matthew.kappus@aps.edu as teacher to advisories
@@ -101,37 +88,13 @@ func (rs *Rosters) CreateMatthewADV() error {
 }
 
 func (rs *Rosters) initTables() error {
-	if _, err := rs.Exec(createStaffEmailsTable); err != nil {
-		return err
-	}
+
 	if _, err := rs.Exec(createStu415Table); err != nil {
 		return err
 	}
 
 	_, err := rs.Exec(createSyncClasses)
 	return err
-}
-
-// InsertStaffEmails inserts list if [name, email] and returns an error
-func (rs *Rosters) InsertStaffEmails(emails [][]string) error {
-	tx, err := rs.Begin()
-	if err != nil {
-		return err
-	}
-
-	stmt, err := tx.Prepare(insertStaffEmails)
-	if err != nil {
-		return err
-	}
-	for _, e := range emails {
-		if len(e) != 2 {
-			continue
-		}
-		_, err = stmt.Exec(e[0], e[1])
-
-	}
-
-	return tx.Commit()
 }
 
 // InsertStu415s deletes (old) and inserts provided types.Stu415 slice into table and returns an error
@@ -147,11 +110,11 @@ func (rs *Rosters) InsertStu415s(s415s types.Stu415s) error {
 	}
 
 	for _, s := range s415s {
-		// if s.Teacher, err = rs.TeacherEmailFromName(s.Teacher); err != nil {
-		// 	continue
-		// }
 
-		stmt.Exec(
+		// organization_name, school_year, student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, meet_days, teacher, room, prescheduled, sync_id
+		if _, err := stmt.Exec(
+			s.OrganizationName,
+			s.SchoolYear,
 			s.StudentName,
 			s.PermID,
 			s.Gender,
@@ -161,38 +124,26 @@ func (rs *Rosters) InsertStu415s(s415s types.Stu415s) error {
 			s.Term,
 			s.SectionID,
 			s.CourseIDAndTitle,
+			s.MeetDays,
 			s.Teacher,
 			s.Room,
+			s.Prescheduled,
 			s.SyncID,
-		)
+		); err != nil {
+			log.Fatal(err)
+		}
 
 	}
 
 	return tx.Commit()
 }
 
-// IsTeacher returns true if teacher_emails contains provided email
-func (rs *Rosters) IsTeacher(email string) bool {
-	_, err := rs.SelectTeacherNameFromEmail(email)
-	return err == nil
-}
-
-// TeacherEmailFromName takes a name and returns their email
-func (rs *Rosters) TeacherEmailFromName(name string) (email string, err error) {
-	err = rs.QueryRow(selectEmailByName, name).Scan(&email)
-	return email, err
-}
-
-// SelectTeacherNameFromEmail takes a name and returns their email
-func (rs *Rosters) SelectTeacherNameFromEmail(email string) (name string, err error) {
-	err = rs.QueryRow(selectNameFromEmail, cleanEmail(email)).Scan(&name)
-	return name, err
-}
-
 func scan415(rows *sql.Rows) (*types.Stu415, error) {
 	s := new(types.Stu415)
 
 	err := rows.Scan(
+		&s.OrganizationName,
+		&s.SchoolYear,
 		&s.StudentName,
 		&s.PermID,
 		&s.Gender,
@@ -201,9 +152,12 @@ func scan415(rows *sql.Rows) (*types.Stu415, error) {
 		&s.Per,
 		&s.Term,
 		&s.SectionID,
+		&s.CourseID,
 		&s.CourseIDAndTitle,
+		&s.MeetDays,
 		&s.Teacher,
 		&s.Room,
+		&s.Prescheduled,
 		&s.SyncID,
 	)
 	return s, err

@@ -21,6 +21,7 @@ func (ac *AuthClient) DownloadEmails() (emails [][]string, err error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer res.Body.Close()
 	r := csv.NewReader(res.Body)
 	r.LazyQuotes = true
@@ -62,7 +63,6 @@ func (ac *AuthClient) requestEmailGUID() (guid string, err error) {
 	if err != nil {
 		return "", err
 	}
-
 
 	time.Sleep(time.Second)
 	getEmailResults = setJobGUID(getEmailResults, guid)
