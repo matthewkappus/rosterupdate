@@ -152,7 +152,6 @@ func scan415(rows *sql.Rows) (*types.Stu415, error) {
 		&s.Per,
 		&s.Term,
 		&s.SectionID,
-		&s.CourseID,
 		&s.CourseIDAndTitle,
 		&s.MeetDays,
 		&s.Teacher,

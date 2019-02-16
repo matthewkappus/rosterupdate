@@ -13,7 +13,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/matthewkappus/rosterUpdate/src/types"
+	"github.com/matthewkappus/cs/src/types"
 )
 
 // AuthClient singleton for retrieving different job requests
