@@ -7,8 +7,9 @@ import (
 	"strings"
 
 	// kosher
-	"github.com/matthewkappus/rosterUpdate/src/types"
 	// Required by law
+	"github.com/matthewkappus/rosterUpdate/src/types"
+	//kosher
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -36,7 +37,7 @@ func cleanEmail(email string) string {
 }
 
 // CreateNewStu415AndStaffEmails drops old roster tables
-func (rs *Rosters) CreateNewStu415AndStaffEmails() error {
+func (rs *Roster) CreateNewStu415AndStaffEmails() error {
 	var err error
 	if _, err = rs.Exec(dropStu415Table); err != nil {
 		return err
@@ -51,7 +52,7 @@ func (rs *Rosters) CreateNewStu415AndStaffEmails() error {
 
 // UpdateRosters creates new tables and inserts arguments Stu415 and staff emails
 // TODO: Use this in types.Update
-func (rs *Rosters) UpdateRosters(s415s types.Stu415s, emails [][]string) error {
+func (rs *Roster) UpdateRosters(s415s types.Stu415s, emails [][]string) error {
 	if len(s415s) == 0 || len(emails) == 0 {
 		return fmt.Errorf("can't update empty s415s len(%d) or emails len(%d)", len(s415s), len(emails))
 	}
@@ -66,7 +67,7 @@ func (rs *Rosters) UpdateRosters(s415s types.Stu415s, emails [][]string) error {
 }
 
 // CreateMatthewADV adds matthew.kappus@aps.edu as teacher to advisories
-func (rs *Rosters) CreateMatthewADV() error {
+func (rs *Roster) CreateMatthewADV() error {
 	if _, err := rs.Exec(dropTmp); err != nil {
 		println("dropTmp err")
 		return err
@@ -87,18 +88,20 @@ func (rs *Rosters) CreateMatthewADV() error {
 	return nil
 }
 
-func (rs *Rosters) initTables() error {
+func (rs *Roster) initTables() error {
 
+	if _, err := rs.Exec(dropTmp); err != nil {
+		return err
+	}
 	if _, err := rs.Exec(createStu415Table); err != nil {
 		return err
 	}
 
-	_, err := rs.Exec(createSyncClasses)
-	return err
+	return nil
 }
 
 // InsertStu415s deletes (old) and inserts provided types.Stu415 slice into table and returns an error
-func (rs *Rosters) InsertStu415s(s415s types.Stu415s) error {
+func (rs *Roster) InsertStu415s(s415s types.Stu415s) error {
 	tx, err := rs.Begin()
 	if err != nil {
 		return err
@@ -163,7 +166,7 @@ func scan415(rows *sql.Rows) (*types.Stu415, error) {
 }
 
 // SelectStu415sBySyncID returns students by their sync id
-func (rs *Rosters) SelectStu415sBySyncID(sid string) (types.Stu415s, error) {
+func (rs *Roster) SelectStu415sBySyncID(sid string) (types.Stu415s, error) {
 	stmt, err := rs.Prepare(selectStu415BySID)
 	if err != nil {
 		return nil, err
@@ -191,7 +194,7 @@ func (rs *Rosters) SelectStu415sBySyncID(sid string) (types.Stu415s, error) {
 }
 
 // SelectStu415sByTeacherPeriod returns stu415s where provided email is the Teacher,
-func (rs *Rosters) SelectStu415sByTeacherPeriod(email, per string) (s415s types.Stu415s, err error) {
+func (rs *Roster) SelectStu415sByTeacherPeriod(email, per string) (s415s types.Stu415s, err error) {
 	stmt, err := rs.Prepare(selectStu415sByTeacherPeriod)
 	if err != nil {
 		return nil, err
@@ -219,7 +222,7 @@ func (rs *Rosters) SelectStu415sByTeacherPeriod(email, per string) (s415s types.
 }
 
 // SelectStu415sByTeacher returns stu415s where provided email is the Teacher,
-func (rs *Rosters) SelectStu415sByTeacher(email string) (s415s types.Stu415s, err error) {
+func (rs *Roster) SelectStu415sByTeacher(email string) (s415s types.Stu415s, err error) {
 	stmt, err := rs.Prepare(selectStu415sByTeacher)
 	if err != nil {
 		return nil, err
@@ -244,13 +247,4 @@ func (rs *Rosters) SelectStu415sByTeacher(email string) (s415s types.Stu415s, er
 		return nil, fmt.Errorf("SelectStu415sByTeacher encountered %d errors:\n%s", scanCount, scanErr)
 	}
 	return s415s, nil
-}
-
-// GetRosters returns rosters by provided email
-func (rs *Rosters) GetRosters(email string) (rosters types.Rosters, err error) {
-	stu415s, err := rs.SelectStu415sByTeacher(email)
-	if err != nil {
-		return nil, err
-	}
-	return types.Stu415sToRoster(stu415s), nil
 }

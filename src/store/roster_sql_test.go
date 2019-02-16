@@ -30,7 +30,7 @@ func TestRosters_GetRosters(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			rs := &Rosters{
+			rs := &Roster{
 				DB: tt.fields.DB,
 			}
 			gotRosters, err := rs.GetRosters(tt.args.email)

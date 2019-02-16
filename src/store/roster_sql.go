@@ -33,7 +33,7 @@ package store
 // )
 
 // // IsStaff returns true if provided email found in stasff_emails
-// func (rs *Rosters) IsStaff(email string) bool {
+// func (rs *Roster) IsStaff(email string) bool {
 // 	var name string
 // 	err := rs.QueryRow(selectNameByEmail, email).Scan(&name)
 // 	return err != nil

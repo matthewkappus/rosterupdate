@@ -36,18 +36,6 @@ type (
 	// Stu415s is a list of Stu415
 	Stu415s []*Stu415
 
-	// Roster groups Stu415s by period
-	Roster struct {
-		ID       string  `json:"id,omitempty"`
-		Title    string  `json:"title,omitempty"`
-		Per      string  `json:"per,omitempty"`
-		Teacher  string  `json:"teacher,omitempty"`
-		Students Stu415s `json:"students,omitempty"`
-	}
-
-	// Rosters list
-	Rosters []*Roster
-
 	// SyncClass associates Stu415s with Classroom Courses
 	// gcid, sync_id, per, term, name, course_id_and_title, description, teacher, is_active
 	SyncClass struct {
@@ -79,33 +67,6 @@ func (s415s Stu415s) SetSyncIDs() error {
 		enc.Reset()
 	}
 	return nil
-}
-
-// Stu415sToRoster takes students and groups them by periods
-func Stu415sToRoster(s415s Stu415s) []*Roster {
-	// Group students by period
-	periods := make(map[string]Stu415s)
-	for _, s := range s415s {
-		if r, ok := periods[s.Per]; !ok {
-			periods[s.Per] = Stu415s{s}
-		} else {
-			periods[s.Per] = append(r, s)
-		}
-	}
-
-	var rosters = make([]*Roster, 0)
-	// For each period, create a roster
-	for _, students := range periods {
-		r := &Roster{
-			ID:       students[0].SyncID,
-			Title:    students[0].CourseIDAndTitle,
-			Per:      students[0].Per,
-			Teacher:  students[0].Teacher,
-			Students: students,
-		}
-		rosters = append(rosters, r)
-	}
-	return rosters
 }
 
 // TeacherNameToEmail takes a [email,name] list and changes s.Teacher to their lowercase email

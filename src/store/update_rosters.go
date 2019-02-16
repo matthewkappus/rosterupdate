@@ -8,7 +8,7 @@ import (
 
 // DownloadRosters prompts user for Synergy Credentials, downloads Stu415s and emails, and
 // returns error if the db can't be updated or provided wait time exceeded
-func (r *Rosters) DownloadRosters(wait time.Duration, synergyUser, synergyPassword string) error {
+func (r Roster) DownloadRosters(wait time.Duration, synergyUser, synergyPassword string) error {
 
 	// u, pw, err := synergy.CredentialPrompt()
 	// if err != nil {
