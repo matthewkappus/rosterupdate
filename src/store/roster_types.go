@@ -8,8 +8,6 @@ import (
 )
 
 type (
-	// GRID is a unique id associating stu415s
-	GRID string
 
 	// stu415(organization_name, school_year, student_name, perm_id, gender, grade, term_name, per, term, section_id, course_id_and_title, meet_days, teacher, room, prescheduled, sync_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
@@ -35,23 +33,6 @@ type (
 
 	// Stu415s is a list of Stu415
 	Stu415s []*Stu415
-
-	// SyncClass associates Stu415s with Classroom Courses
-	// gcid, sync_id, per, term, name, course_id_and_title, description, teacher, is_active
-	SyncClass struct {
-		GCID             string  `json:"gcid,omitempty"`
-		SyncID           string  `json:"sync_id,omitempty"`
-		Per              string  `json:"per,omitempty"`
-		Term             string  `json:"term,omitempty"`
-		Name             string  `json:"name,omitempty"`
-		CourseIDAndTitle string  `json:"course_id_and_title,omitempty"`
-		Description      string  `json:"description,omitempty"`
-		Teacher          string  `json:"teacher,omitempty"`
-		IsActive         bool    `json:"is_active,omitempty"`
-		Roster           Stu415s `json:"roster,omitempty"`
-		Invited          Stu415s `json:"invited,omitempty"`
-		Enrolled         Stu415s `json:"enrolled,omitempty"`
-	}
 )
 
 // SetSyncIDs hashes the stu415 props to create new sync id
