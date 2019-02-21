@@ -8,17 +8,21 @@ import (
 // Parse returns an error if provided row can't be assigned to s415s
 // adds @aps.edu to perm
 func (s *Stu415) Parse(r []string) error {
-	s.StudentName = r[0]
-	s.PermID = r[1] + "@aps.edu"
-	s.Gender = r[2]
-	s.Grade = r[3]
-	s.TermName = r[4]
-	s.Per = r[5]
-	s.Term = r[6]
-	s.SectionID = r[7]
-	s.CourseIDAndTitle = r[8]
-	s.Teacher = r[9]
-	s.Room = r[10]
+	s.OrganizationName = r[0]
+	s.SchoolYear = r[1]
+	s.StudentName = r[2]
+	s.PermID = r[3] + "@aps.edu"
+	s.Gender = r[4]
+	s.Grade = r[5]
+	s.TermName = r[6]
+	s.Per = r[7]
+	s.Term = r[8]
+	s.SectionID = r[9]
+	s.CourseIDAndTitle = r[10]
+	s.MeetDays = r[11]
+	s.Teacher = r[12]
+	s.Room = r[13]
+	s.Prescheduled = r[14]
 
 	return nil
 }
