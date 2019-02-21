@@ -13,7 +13,7 @@ func main() {
 	u := os.Getenv("SYNERGY_USER")
 	p := os.Getenv("SYNERGY_PASSWORD")
 
-	f, err := os.OpenFile("access.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile("/var/log/rosterUpdate.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
