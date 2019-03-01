@@ -10,8 +10,8 @@ import (
 
 func main() {
 
-	u := os.Getenv("SYNERGY_USER")
-	p := os.Getenv("SYNERGY_PASSWORD")
+	u := "e204920"
+	p :=  "Mm12345="
 
 	f, err := os.OpenFile("/var/log/rosterUpdate.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
