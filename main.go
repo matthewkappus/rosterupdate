@@ -19,6 +19,8 @@ func main() {
 	}
 	defer f.Close()
 
+	
+
 	logger := log.New(f, "UpdateLog: ", log.Ldate|log.Lshortfile)
 	rosterDB, err := store.New("/rosters.db")
 

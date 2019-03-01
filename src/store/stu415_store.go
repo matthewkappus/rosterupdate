@@ -165,6 +165,24 @@ func scan415(rows *sql.Rows) (*types.Stu415, error) {
 	return s, err
 }
 
+// SelectClassesByTeacher gets stu415s by provided teacher email and returns a Roster list or error
+func (rs *Roster) SelectClassesByTeacher(email string) ([]*types.Class, error) {
+	s415s, err := rs.SelectStu415sByTeacher(email)
+	if err != nil {
+		return nil, err
+	}
+	return types.Stu415sToClasses(s415s), nil
+}
+
+// SelectClassByID takes a syncid and returns a class or error if not found
+func (rs *Roster) SelectClassByID(sid string) (*types.Class, error) {
+	s415s, err := rs.SelectStu415sBySyncID(sid)
+	if err != nil {
+		return nil, err
+	}
+	return types.Stu415sToClass(s415s), nil
+}
+
 // SelectStu415sBySyncID returns students by their sync id
 func (rs *Roster) SelectStu415sBySyncID(sid string) (types.Stu415s, error) {
 	stmt, err := rs.Prepare(selectStu415BySID)

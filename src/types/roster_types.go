@@ -31,8 +31,8 @@ type (
 	// Stu415s is a list of Stu415
 	Stu415s []*Stu415
 
-	// Roster groups Stu415s by period
-	Roster struct {
+	// Class groups Stu415s by period
+	Class struct {
 		ID       string  `json:"id,omitempty"`
 		Title    string  `json:"title,omitempty"`
 		Per      string  `json:"per,omitempty"`
@@ -56,8 +56,20 @@ func (s415s Stu415s) SetSyncIDs() error {
 	return nil
 }
 
-// Stu415sToRoster takes students and groups them by periods
-func Stu415sToRoster(s415s Stu415s) []*Roster {
+// Stu415sToClass takes Stu415s and returns a class based on first element
+func Stu415sToClass(s415s Stu415s) *Class {
+	s := s415s[0]
+	return &Class{
+		ID:       s.SyncID,
+		Title:    s.CourseIDAndTitle,
+		Per:      s.Per,
+		Teacher:  s.Teacher,
+		Students: s415s,
+	}
+}
+
+// Stu415sToClasses takes students and groups them by periods
+func Stu415sToClasses(s415s Stu415s) []*Class {
 	// Group students by period
 	periods := make(map[string]Stu415s)
 	for _, s := range s415s {
@@ -68,10 +80,10 @@ func Stu415sToRoster(s415s Stu415s) []*Roster {
 		}
 	}
 
-	var rosters = make([]*Roster, 0)
+	var rosters = make([]*Class, 0)
 	// For each period, create a roster
 	for _, students := range periods {
-		r := &Roster{
+		r := &Class{
 			ID:       students[0].SyncID,
 			Title:    students[0].CourseIDAndTitle,
 			Per:      students[0].Per,
