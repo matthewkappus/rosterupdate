@@ -10,10 +10,6 @@ import (
 // returns error if the db can't be updated or provided wait time exceeded
 func (r Roster) DownloadRosters(wait time.Duration, synergyUser, synergyPassword string) error {
 
-	// u, pw, err := synergy.CredentialPrompt()
-	// if err != nil {
-	// 	return err
-	// }
 	ac, err := synergy.NewClient(synergyUser, synergyPassword, wait)
 	if err != nil {
 		return err
